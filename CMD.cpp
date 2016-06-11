@@ -1,9 +1,12 @@
-
+//Header
 #include "CMD.h"
-
+//std
 #include <cstdarg>
 #include <deque>
+#include <exception>
+#include <iostream>
 
+//Usings
 using namespace std;
 using namespace CMD;
 
@@ -28,28 +31,38 @@ std::string ltrim(const std::string &str, char c)
     return str.substr(str.find_first_not_of(c), str.size());
 }
 
-#define THROW_(_extype_, _fmt_, ...) \
-    throw _extype_(va(_fmt_, ##__VA_ARGS__));
+#define THROW_IF_(_expr_, _extype_, _fmt_, ...) \
+    if((_expr_)) {  \
+        throw _extype_(va(_fmt_, ##__VA_ARGS__)); \
+    }
+
+
 
 #define ASSERT_(_expr_, _fmt_, ...) \
     if(!(_expr_)) { \
         cout << va(_fmt_, ##__VA_ARGS__) << endl; \
     }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // Flag                                                                       //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
+const int Flag::kAnyNumber = 200; //COWTODO: fix...
+
 Flag::Flag():
-    m_requireArgs      (false),
-    m_requiredArgsCount(-1),
+    m_requiredArgs          (false),
+    m_requiredArgsCount     (0),
+
+    m_optionalArgs          (false),
+    m_optionalArgsCount     (0),
+
     m_stopOnView       (false),
-    m_allowDuplicate   (false),
+
+    m_allowDuplicates  (false),
     m_duplicateMode    (Flag::DuplicateMode::Count),
-    // m_shortStr         (""),
-    // m_longStr          (""),
-    // m_values           (),
+
     m_foundCount       (0)
 {
     //Empty...
@@ -62,24 +75,45 @@ Flag::Flag():
 //Args
 Flag& Flag::NoArgs()
 {
-    m_requireArgs = false;
+    m_requiredArgs = false;
+    m_optionalArgs = false;
+
+    m_requiredArgsCount = 0;
+    m_optionalArgsCount = 0;
+
     return *this;
 }
 
 Flag& Flag::RequiredArgs(int count /* = 1 */)
 {
-    m_requireArgs       = true;
+    m_requiredArgs      = true;
     m_requiredArgsCount = count;
 
-    if(m_requiredArgsCount <= 0)
-    {
-        THROW_(std::out_of_range,
-               "CMD::Flag::RequiredArgs must be called with > 0 value - Current is: %d",
-               m_requiredArgsCount);
-    }
+    THROW_IF_(
+        m_requiredArgsCount <= 0,
+        std::out_of_range,
+        "CMD::Flag::RequiredArgs must be called with > 0 value - Current is: %d",
+        m_requiredArgsCount
+    );
 
     return *this;
 }
+
+Flag& Flag::OptionalArgs(int count /* = 1 */ )
+{
+    m_optionalArgs      = true;
+    m_optionalArgsCount = count;
+
+    THROW_IF_(
+        m_optionalArgsCount <= 0,
+        std::out_of_range,
+        "CMD::Flag::OptionalArgs must be called with > 0 value - Current is: %d",
+        m_optionalArgsCount
+    );
+
+    return *this;
+}
+
 
 //
 Flag& Flag::StopOnView()
@@ -88,20 +122,22 @@ Flag& Flag::StopOnView()
     return *this;
 }
 
+
 //Duplicates
 Flag& Flag::DoNotAllowDuplicates()
 {
-    m_allowDuplicate = false;
+    m_allowDuplicates = false;
     return *this;
 }
 
 Flag& Flag::AllowDuplicates(DuplicateMode duplicateMode)
 {
-    m_allowDuplicate = true;
+    m_allowDuplicates = true;
     m_duplicateMode  = duplicateMode;
 
     return *this;
 }
+
 
 //Strings
 Flag& Flag::Short(const std::string &shortStr)
@@ -124,21 +160,51 @@ Flag& Flag::Long(const std::string &longStr)
 //Args
 bool Flag::getNoArgs() const
 {
-    return m_requireArgs == false;
+    return m_requiredArgs == false && m_optionalArgsCount == false;
 }
+
 
 bool Flag::getRequiredArgs() const
 {
-    return m_requireArgs == true;
+    return m_requiredArgs;
 }
 
 int Flag::getRequiredArgsCount() const
 {
-    ASSERT_(getNoArgs() == false,
-            "BAD LOGIC - We should not call this when getNoArgs() is true.");
-
     return m_requiredArgsCount;
 }
+
+int Flag::getRequiredArgsFoundCount() const
+{
+    return m_requiredValuesVec.size();
+}
+
+const std::vector<std::string>& Flag::getRequiredValues() const
+{
+    return m_requiredValuesVec;
+}
+
+
+bool Flag::getOptionalArgs() const
+{
+    return m_optionalArgs;
+}
+
+int Flag::getOptionalArgsCount() const
+{
+    return m_optionalArgsCount;
+}
+
+int Flag::getOptionalArgsFoundCount() const
+{
+    return m_optionalValuesVec.size();
+}
+
+const std::vector<std::string>& Flag::getOptionalValues() const
+{
+    return m_optionalValuesVec;
+}
+
 
 //
 bool Flag::getStopOnView() const
@@ -146,10 +212,11 @@ bool Flag::getStopOnView() const
     return m_stopOnView;
 }
 
+
 //Duplicates
 bool Flag::getAllowDuplicates() const
 {
-    return m_allowDuplicate;
+    return m_allowDuplicates;
 }
 
 Flag::DuplicateMode Flag::getAllowDuplicatesMode() const
@@ -161,15 +228,11 @@ Flag::DuplicateMode Flag::getAllowDuplicatesMode() const
    return m_duplicateMode;
 }
 
+
 //Strings
 bool Flag::hasShortStr() const
 {
     return !m_shortStr.empty();
-}
-
-bool Flag::hasLongStr() const
-{
-    return !m_longStr.empty();
 }
 
 const std::string& Flag::getShortStr() const
@@ -180,6 +243,12 @@ const std::string& Flag::getShortStr() const
    return m_shortStr;
 }
 
+
+bool Flag::hasLongStr() const
+{
+    return !m_longStr.empty();
+}
+
 const std::string& Flag::getLongStr() const
 {
     ASSERT_(hasLongStr() == true,
@@ -187,18 +256,6 @@ const std::string& Flag::getLongStr() const
 
     return m_longStr;
 }
-
-//Value
-bool Flag::hasValues() const
-{
-    return !m_valuesVec.empty();
-}
-
-std::vector<std::string> Flag::getValues() const
-{
-    return m_valuesVec;
-}
-
 
 //Found
 bool Flag::wasFound() const
@@ -215,38 +272,47 @@ int Flag::getFoundCount() const
 ////////////////////////////////////////////////////////////////////////////////
 // Private Methods                                                            //
 ////////////////////////////////////////////////////////////////////////////////
+void Flag::addFoundCount()
+{
+    //COWTODO: Trhow if do not allow duplicates and this value is > 1
+    m_foundCount++;
+}
+
+void Flag::addRequiredValue(const std::string &value)
+{
+    //COWTODO: Throw if already reached the ammount needed.
+    m_requiredValuesVec.push_back(value);
+}
+
+void Flag::addOptionalValue(const std::string &value)
+{
+    //COWTODO: Throw if already reached the ammount needed.
+    m_optionalValuesVec.push_back(value);
+}
+
+
 void Flag::validateStrings() const
 {
     //Validate the strings...
-    if(!hasShortStr() && !hasLongStr())
-    {
-        THROW_(std::logic_error,
-               "CMD::Flag must contain either a short or long string");
-    }
+    THROW_IF_(
+        (!hasShortStr() && !hasLongStr()),
+        std::logic_error,
+        "CMD::Flag must contain either a short or long string"
+    );
 
     //Short string must has only one char.
-    if(m_shortStr.size() != 1)
-    {
-        THROW_(std::domain_error,
-               "CMD::Flag shortStr must be only char long - shortStr is: %s",
-               m_shortStr.c_str());
-    }
-}
-
-
-void Flag::addFoundCount()
-{
-    ++m_foundCount;
-}
-
-void Flag::addFoundValue(const std::string &value)
-{
-    m_valuesVec.push_back(value);
+    THROW_IF_(
+        (hasShortStr() && m_shortStr.size() != 1),
+        std::domain_error,
+        "CMD::Flag shortStr must be only char long - shortStr is: %s",
+        m_shortStr.c_str()
+    );
 }
 
 void Flag::clearValues()
 {
-    m_valuesVec.clear();
+    m_requiredValuesVec.clear();
+    m_optionalValuesVec.clear();
 }
 
 
@@ -265,6 +331,12 @@ Parser::Parser(int argc, char **argv)
         m_commandLineElements.push_back(argv[i]);
 }
 
+
+Parser::Parser(const std::vector<std::string> &args) :
+    m_commandLineElements(std::begin(args), std::end(args))
+{
+
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -320,12 +392,12 @@ void Parser::parse()
         int flagIndex = findIndexForFlagWithStr(currElement);
 
         //Not a valid flag...
-        if(flagIndex == -1)
-        {
-            THROW_(std::invalid_argument,
-                   "'%s' - Is not a valid flag",
-                   currElement.c_str());
-        }
+        THROW_IF_(
+            flagIndex == -1,
+            std::invalid_argument,
+            "'%s' - Is not a valid flag",
+            currElement.c_str()
+        );
 
 
         auto &flagObj = m_flagsVec[flagIndex];
@@ -333,13 +405,13 @@ void Parser::parse()
 
         //Flag does not allow duplicates,
         //but we already found this earlier
-        if(flagObj->getFoundCount() > 1 &&
-           flagObj->getAllowDuplicates() == false)
-        {
-            THROW_(std::runtime_error,
-                   "'%s' - Does not allow duplicates but was already found",
-                   currElement.c_str());
-        }
+        THROW_IF_(
+            (flagObj->getFoundCount() > 1 &&
+             flagObj->getAllowDuplicates() == false),
+            std::runtime_error,
+            "'%s' - Does not allow duplicates but was already found",
+            currElement.c_str()
+        );
 
         //Start getting the args for this flag...
         if(flagObj->getRequiredArgs())
@@ -351,17 +423,19 @@ void Parser::parse()
                 flagObj->clearValues();
             }
 
+            //Add the REQUIRED ARGS.
             for(int index = 0;
-                index < flagObj->getRequiredArgsCount();
+                flagObj->getRequiredArgsFoundCount() !=
+                flagObj->getRequiredArgsCount();
                 ++index)
             {
-                if(m_commandLineElements.empty())
-                {
-                    THROW_(std::runtime_error,
-                           "'%s' - Requires %d arguments but there is not enough args",
-                           currElement.c_str(),
-                           flagObj->getRequiredArgsCount());
-                }
+                THROW_IF_(
+                    m_commandLineElements.empty(),
+                    std::runtime_error,
+                    "'%s' - Requires %d arguments but there is not enough args",
+                    currElement.c_str(),
+                    flagObj->getRequiredArgsCount()
+                );
 
                 //Get the current first element on the cmd line vec.
                 //It can be two things:
@@ -372,18 +446,43 @@ void Parser::parse()
                 //number of required values for this flag object.
                 auto value = m_commandLineElements.front();
 
-                if(isFlagStr(value))
-                {
-                    THROW_(std::runtime_error,
-                           "'%s' - Requires %d arguments but just %d was found",
-                           currElement.c_str(),
-                           flagObj->getRequiredArgsCount(),
-                           index);
-                }
+                THROW_IF_(
+                    isFlagStr(value),
+                    std::runtime_error,
+                     "'%s' - Requires %d arguments but just %d was found",
+                     currElement.c_str(),
+                     flagObj->getRequiredArgsCount(),
+                     index
+                );
 
                 //Not a flag str - Add the value to flag and consume it
                 //from the command line elements.
-                flagObj->addFoundValue(value);
+                flagObj->addRequiredValue(value);
+                m_commandLineElements.pop_front();
+            }
+
+
+            //Add the OPTIONAL ARGS.
+            while(flagObj->getOptionalArgsFoundCount() !=
+                  flagObj->getOptionalArgsCount())
+            {
+                if(m_commandLineElements.empty())
+                    break;
+
+                //Get the current first element on the cmd line vec.
+                //It can be two things:
+                //  1 - A value str (non flag), so we set it to Flag object.
+                //  2 - A flag str, meaning that all values for this flag
+                //      was "consumed".
+                //If all values were consumed means that there are no
+                //optional args for this flag...
+                auto value = m_commandLineElements.front();
+                if(isFlagStr(value))
+                    break;
+
+                //Not a flag str - Add the value to flag and consume it
+                //from the command line elements.
+                flagObj->addOptionalValue(value);
                 m_commandLineElements.pop_front();
             }
         }

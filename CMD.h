@@ -1,13 +1,8 @@
+//std
 #include <deque>
-#include <exception>
 #include <functional>
-#include <memory>
-#include <iostream>
 #include <string>
-#include <utility>
 #include <vector>
-
-using namespace std;
 
 #define NS_CMD_BEGIN namespace CMD {
 #define NS_CMD_END   }
@@ -29,6 +24,7 @@ public:
 public:
     friend class Parser;
 
+
     // CTOR / DTOR //
 public:
     Flag();
@@ -39,6 +35,7 @@ public:
     //Args
     Flag& NoArgs();
     Flag& RequiredArgs(int count = 1);
+    Flag& OptionalArgs(int count = 1);
 
     //
     Flag& StopOnView();
@@ -56,8 +53,16 @@ public:
 public:
     //Args
     bool getNoArgs() const;
+
     bool getRequiredArgs() const;
     int  getRequiredArgsCount() const;
+    int  getRequiredArgsFoundCount() const;
+    const std::vector<std::string>& getRequiredValues() const;
+
+    bool getOptionalArgs() const;
+    int  getOptionalArgsCount() const;
+    int  getOptionalArgsFoundCount() const;
+    const std::vector<std::string>& getOptionalValues() const;
 
     //
     bool getStopOnView() const;
@@ -68,14 +73,10 @@ public:
 
     //Strings
     bool hasShortStr() const;
-    bool hasLongStr() const;
-
     const std::string& getShortStr() const;
-    const std::string& getLongStr() const;
 
-    //Value
-    bool hasValues() const;
-    std::vector<std::string> getValues() const;
+    bool hasLongStr() const;
+    const std::string& getLongStr() const;
 
     //Found
     bool wasFound() const;
@@ -86,25 +87,32 @@ public:
 private:
     // This methods are intended to be used only by CMD::Parser //
     void addFoundCount();
-    void addFoundValue(const std::string &value);
+
+    void addRequiredValue(const std::string &value);
+    void addOptionalValue(const std::string &value);
 
     void validateStrings() const;
     void clearValues();
 
+
     // iVars //
 private:
-    bool m_requireArgs;
+    bool m_requiredArgs;
     int  m_requiredArgsCount;
+    std::vector<std::string> m_requiredValuesVec;
+
+    bool m_optionalArgs;
+    int  m_optionalArgsCount;
+    std::vector<std::string> m_optionalValuesVec;
 
     bool m_stopOnView;
 
-    bool          m_allowDuplicate;
+    bool          m_allowDuplicates;
     DuplicateMode m_duplicateMode;
 
     std::string m_shortStr;
     std::string m_longStr;
 
-    std::vector<std::string> m_valuesVec;
     int m_foundCount;
 };
 
@@ -117,6 +125,7 @@ struct Parser
     // CTOR //
 public:
     Parser(int argc, char **argv);
+    Parser(const std::vector<std::string> &args);
 
 
     // Public Methods //
@@ -126,21 +135,24 @@ public:
 
     std::vector<std::string> getNonFlagArgs();
 
+
     // Private //
 private:
     int findIndexForFlagWithStr(const std::string &str);
 
+    //Flag Checkers
     bool isFlagStr     (const std::string &str);
     bool isLongFlagStr (const std::string &str);
     bool isShortFlagStr(const std::string &str);
 
+    //Flag extractors
     std::string extractFlagName (const std::string &str);
     std::string extractFlagValue(const std::string &str);
 
 
     // iVars //
 private:
-    std::vector<Flag *>        m_flagsVec;
+    std::vector<Flag *>      m_flagsVec;
     std::vector<std::string> m_nonFlagArgs;
 
     std::deque<std::string> m_commandLineElements;
