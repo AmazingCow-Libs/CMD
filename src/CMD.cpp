@@ -414,7 +414,7 @@ void Parser::parse()
         );
 
         //Start getting the args for this flag...
-        if(flagObj->getRequiredArgs())
+        if(flagObj->getRequiredArgs() || flagObj->getOptionalArgs())
         {
             //Override mode - Clear the previous values.
             if(flagObj->getAllowDuplicates() &&
