@@ -74,27 +74,80 @@ public:
     // Options "Setters" //
 public:
     //Args
-    ///
+    ///@brief
+    ///     Set the the CMD::Flag doesn't requires any args.
+    ///@returns
+    ///     Reference to itself enabling cascading method calls.
     Flag& RequiresNoArgs();
 
-    ///@throws std::out_of_range if count <= 0
+    ///@brief
+    ///     Set the the CMD::Flag requires args.
+    ///     The required args are processed before the optional args.
+    ///@param count
+    ///     The number of args that this flag requires.
+    ///@throws
+    ///     std::out_of_range if count <= 0.
+    ///@returns
+    ///     Reference to itself enabling cascading method calls.
     Flag& RequiresArgs(int count = 1);
 
-    ///@throws std::out_of_range if count <= 0
+    ///@brief
+    ///     Set the the CMD::Flag has optional args.
+    ///     The optional args are processed after the required args.
+    ///@param count
+    ///     The maximum number of args that this flag can gets.
+    ///@throws
+    ///     std::out_of_range if count <= 0.
+    ///@returns
+    ///     Reference to itself enabling cascading method calls.
     Flag& OptionalArgs(int count = 1);
 
 
-    //
+    ///@brief
+    ///     Set the CMD::Parser should stop the parsing after
+    ///     find this flag. Helpful for help, version flags.
+    ///@returns
+    ///     Reference to itself enabling cascading method calls.
     Flag& StopOnView();
 
 
     //Duplicates
+    ///@brief
+    ///     Set the this flag cannot have any duplicates, i.e
+    ///     cannot happen more then once in the command line.
+    ///@returns
+    ///     Reference to itself enabling cascading method calls.
     Flag& NotAllowDuplicates();
+
+    ///@brief
+    ///     Set that this flag can happen more the one time in
+    ///     command line.
+    ///@param duplicateMode
+    ///     The way that the duplicates will be treated.
+    ///@returns
+    ///     Reference to itself enabling cascading method calls.
     Flag& AllowDuplicates(DuplicateMode duplicateMode);
 
 
     //Strings
+    ///@brief
+    ///     Set the short string (one dash, one char) for this flag.
+    ///@param shortStr
+    ///     A one char string.
+    ///@note
+    ///     The string should not have the prefix -.
+    ///@returns
+    ///     Reference to itself enabling cascading method calls.
     Flag& Short(const std::string &shortStr);
+
+    ///@brief
+    ///     Set the long string (two dashes, multi chars) for this flag.
+    ///@param longStr
+    ///     A string of any size.
+    ///@note
+    ///     The string should not have the prefix -.
+    ///@returns
+    ///     Reference to itself enabling cascading method calls.
     Flag& Long(const std::string &longStr);
 
 
@@ -104,28 +157,33 @@ public:
     bool getNoArgsRequired() const;
 
     bool getRequiredArgs() const;
-    int  getRequiredArgsCount() const;
-    int  getRequiredArgsFoundCount() const;
+    int getRequiredArgsCount() const;
+    int getRequiredArgsFoundCount() const;
     const std::vector<std::string>& getRequiredValues() const;
 
+
     bool getOptionalArgs() const;
-    int  getOptionalArgsCount() const;
-    int  getOptionalArgsFoundCount() const;
+    int getOptionalArgsCount() const;
+    int getOptionalArgsFoundCount() const;
     const std::vector<std::string>& getOptionalValues() const;
 
-    //
+
     bool getStopOnView() const;
 
+
     //Duplicates
-    bool          getAllowDuplicates() const;
+    bool getAllowDuplicates() const;
     DuplicateMode getAllowDuplicatesMode() const;
+
 
     //Strings
     bool hasShortStr() const;
     const std::string& getShortStr() const;
 
+
     bool hasLongStr() const;
     const std::string& getLongStr() const;
+
 
     //Found
     bool wasFound() const;
