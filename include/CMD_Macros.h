@@ -2,7 +2,7 @@
 //               █      █                                                     //
 //               ████████                                                     //
 //             ██        ██                                                   //
-//            ███  █  █  ███        CMD.h                                     //
+//            ███  █  █  ███        CMD_Macros.h                              //
 //            █ █        █ █        CMD                                       //
 //             ████████████                                                   //
 //           █              █       Copyright (c) 2016                        //
@@ -38,12 +38,29 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 
-#ifndef __CMD_include_CMD_h__
-#define __CMD_include_CMD_h__
+#ifndef __CMD_include_CMD_Macros_h__
+#define __CMD_include_CMD_Macros_h__
 
+//std
+#include <iostream>
 //CMD
 #include "CMD_Utils.h"
-#include "Flag.h"
-#include "Parser.h"
+#include "CMD_Helpers.h"
 
-#endif // defined(__CMD_include_CMD_h__)
+
+NS_CMD_BEGIN
+
+#define THROW_IF_(_expr_, _extype_, _fmt_, ...) \
+    if((_expr_)) {  \
+        throw _extype_(va(_fmt_, ##__VA_ARGS__)); \
+    }
+
+
+
+#define ASSERT_(_expr_, _fmt_, ...) \
+    if(!(_expr_)) { \
+        std::cout << va(_fmt_, ##__VA_ARGS__) << std::endl; \
+    }
+
+NS_CMD_END
+#endif // defined(__CMD_include_CMD_Macros_h__) //

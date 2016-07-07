@@ -2,7 +2,7 @@
 //               █      █                                                     //
 //               ████████                                                     //
 //             ██        ██                                                   //
-//            ███  █  █  ███        CMD.h                                     //
+//            ███  █  █  ███        CMD_Helpers.h                             //
 //            █ █        █ █        CMD                                       //
 //             ████████████                                                   //
 //           █              █       Copyright (c) 2016                        //
@@ -38,12 +38,36 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 
-#ifndef __CMD_include_CMD_h__
-#define __CMD_include_CMD_h__
+#ifndef __CMD_include_CMD_Helpers_h__
+#define __CMD_include_CMD_Helpers_h__
 
+//std
+#include <cstdarg>
 //CMD
 #include "CMD_Utils.h"
-#include "Flag.h"
-#include "Parser.h"
 
-#endif // defined(__CMD_include_CMD_h__)
+NS_CMD_BEGIN
+
+static std::string va(const char *fmt, ...)
+{
+    constexpr int kBufferSize = 1024;
+    char buffer[kBufferSize]  = { '\0' };
+
+    va_list args;
+    va_start(args, fmt);
+
+    vsnprintf(buffer, kBufferSize, fmt, args);
+
+    va_end(args);
+
+    return buffer;
+}
+
+static std::string ltrim(const std::string &str, char c)
+{
+    return str.substr(str.find_first_not_of(c), str.size());
+}
+
+
+NS_CMD_END
+#endif // defined(__CMD_include_CMD_Helpers_h__) //

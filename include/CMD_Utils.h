@@ -2,7 +2,7 @@
 //               █      █                                                     //
 //               ████████                                                     //
 //             ██        ██                                                   //
-//            ███  █  █  ███        CMD.h                                     //
+//            ███  █  █  ███        CMD_Utils.h                               //
 //            █ █        █ █        CMD                                       //
 //             ████████████                                                   //
 //           █              █       Copyright (c) 2016                        //
@@ -38,12 +38,29 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 
-#ifndef __CMD_include_CMD_h__
-#define __CMD_include_CMD_h__
+#ifndef __CMD_include_CMD_Utils_h__
+#define __CMD_include_CMD_Utils_h__
 
-//CMD
-#include "CMD_Utils.h"
-#include "Flag.h"
-#include "Parser.h"
+////////////////////////////////////////////////////////////////////////////////
+// Versioning                                                                 //
+////////////////////////////////////////////////////////////////////////////////
+//The core version number.
+#define COW_CMD_VERSION_MAJOR    "0"
+#define COW_CMD_VERSION_MINOR    "0"
+#define COW_CMD_VERSION_REVISION "1"
 
-#endif // defined(__CMD_include_CMD_h__)
+#define COW_CMD_VERSION       \
+    COW_CMD_VERSION_MAJOR "." \
+    COW_CMD_VERSION_MINOR "." \
+    COW_CMD_VERSION_REVISION
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Namespaces                                                                 //
+////////////////////////////////////////////////////////////////////////////////
+#define NS_CMD_BEGIN namespace CMD {
+#define NS_CMD_END   }
+#define USING_NS_CMD using namespace CMD;
+
+#endif // defined(__CMD_include_CMD_Utils_h__) //
+

@@ -2,7 +2,7 @@
 //               █      █                                                     //
 //               ████████                                                     //
 //             ██        ██                                                   //
-//            ███  █  █  ███        CMD.h                                     //
+//            ███  █  █  ███        Flag.h                                    //
 //            █ █        █ █        CMD                                       //
 //             ████████████                                                   //
 //           █              █       Copyright (c) 2016                        //
@@ -38,12 +38,138 @@
 //                                  Enjoy :)                                  //
 //----------------------------------------------------------------------------//
 
-#ifndef __CMD_include_CMD_h__
-#define __CMD_include_CMD_h__
+#ifndef __CMD_include_Flag_h__
+#define __CMD_include_Flag_h__
 
+//std
+#include <vector>
+#include <string>
 //CMD
 #include "CMD_Utils.h"
-#include "Flag.h"
-#include "Parser.h"
 
-#endif // defined(__CMD_include_CMD_h__)
+
+NS_CMD_BEGIN
+
+////////////////////////////////////////////////////////////////////////////////
+// Flag                                                                       //
+////////////////////////////////////////////////////////////////////////////////
+class Flag
+{
+    // Enum //
+public:
+    static const int kAnyNumber;
+    enum class DuplicateMode { Override, Count };
+
+
+    // Friends //
+public:
+    friend class Parser;
+
+
+    // CTOR / DTOR //
+public:
+    Flag();
+
+
+    // Options "Setters" //
+public:
+    //Args
+    ///
+    Flag& RequiresNoArgs();
+
+    ///@throws std::out_of_range if count <= 0
+    Flag& RequiresArgs(int count = 1);
+
+    ///@throws std::out_of_range if count <= 0
+    Flag& OptionalArgs(int count = 1);
+
+
+    //
+    Flag& StopOnView();
+
+
+    //Duplicates
+    Flag& NotAllowDuplicates();
+    Flag& AllowDuplicates(DuplicateMode duplicateMode);
+
+
+    //Strings
+    Flag& Short(const std::string &shortStr);
+    Flag& Long(const std::string &longStr);
+
+
+    // Options "Getters" //
+public:
+    //Args
+    bool getNoArgsRequired() const;
+
+    bool getRequiredArgs() const;
+    int  getRequiredArgsCount() const;
+    int  getRequiredArgsFoundCount() const;
+    const std::vector<std::string>& getRequiredValues() const;
+
+    bool getOptionalArgs() const;
+    int  getOptionalArgsCount() const;
+    int  getOptionalArgsFoundCount() const;
+    const std::vector<std::string>& getOptionalValues() const;
+
+    //
+    bool getStopOnView() const;
+
+    //Duplicates
+    bool          getAllowDuplicates() const;
+    DuplicateMode getAllowDuplicatesMode() const;
+
+    //Strings
+    bool hasShortStr() const;
+    const std::string& getShortStr() const;
+
+    bool hasLongStr() const;
+    const std::string& getLongStr() const;
+
+    //Found
+    bool wasFound() const;
+    int  getFoundCount() const;
+
+
+    // Private Methods //
+private:
+    // This methods are intended to be used only by CMD::Parser //
+    void addFoundCount();
+
+    void addRequiredValue(const std::string &value);
+    void addOptionalValue(const std::string &value);
+
+    void validateStrings() const;
+    void clearValues();
+
+
+    // iVars //
+private:
+    //Required Args
+    bool m_requiredArgs;
+    int  m_requiredArgsCount;
+    std::vector<std::string> m_requiredValuesVec;
+
+    //Optional Args
+    bool m_optionalArgs;
+    int  m_optionalArgsCount;
+    std::vector<std::string> m_optionalValuesVec;
+
+    //Stop
+    bool m_stopOnView;
+
+    //Duplicate
+    bool          m_allowDuplicates;
+    DuplicateMode m_duplicateMode;
+
+    //Strings
+    std::string m_shortStr;
+    std::string m_longStr;
+
+    //Found
+    int m_foundCount;
+};
+
+NS_CMD_END
+#endif // defined(__CMD_include_Flag_h__) //
