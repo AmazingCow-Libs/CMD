@@ -39,10 +39,10 @@
 //----------------------------------------------------------------------------//
 
 //Header
-#include "Parser.h"
+#include "../include/Parser.h"
 //CMD
-#include "CMD_Macros.h"
-#include "CMD_Helpers.h"
+#include "../include/CMD_Macros.h"
+#include "../include/CMD_Helpers.h"
 
 //Usings
 USING_NS_CMD;

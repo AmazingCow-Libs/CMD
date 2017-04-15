@@ -39,12 +39,12 @@
 //----------------------------------------------------------------------------//
 
 //Header
-#include "Flag.h"
+#include "../include/Flag.h"
 //std
 #include <limits>
 #include <stdexcept>
 //CMD
-#include "CMD_Macros.h"
+#include "../include/CMD_Macros.h"
 
 
 //Usings
