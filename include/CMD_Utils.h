@@ -47,7 +47,7 @@
 //The core version number.
 #define COW_CMD_VERSION_MAJOR    "0"
 #define COW_CMD_VERSION_MINOR    "0"
-#define COW_CMD_VERSION_REVISION "1"
+#define COW_CMD_VERSION_REVISION "2"
 
 #define COW_CMD_VERSION       \
     COW_CMD_VERSION_MAJOR "." \

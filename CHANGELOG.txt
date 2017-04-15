@@ -1,6 +1,12 @@
 --------------------------------------------------------------------------------
 | Version 0.0.x                                                                |
 --------------------------------------------------------------------------------
-[Version v0.0.0] - Jun 7, 2016
+[Version v0.0.2] - April 16, 2017
+    - Add some helper functions.
+    - Change the includes to relative paths.
+    - Remove the junk file.
+    - Fix the previous CHANGELOG entry.
+
+[Version v0.0.1] - Jun 7, 2016
     - Finish the basic implementation.
 
