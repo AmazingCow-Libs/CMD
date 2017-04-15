@@ -111,6 +111,11 @@ public:
     Flag& StopOnView();
 
 
+    //Defaults
+    ///
+    Flag& Default(const std::string &value);
+
+
     //Duplicates
     ///@brief
     ///     Set the this flag cannot have any duplicates, i.e
@@ -170,6 +175,9 @@ public:
 
     bool getStopOnView() const;
 
+    //Defaults
+    const std::string& getDefaultValue() const;
+
 
     //Duplicates
     bool getAllowDuplicates() const;
@@ -179,10 +187,13 @@ public:
     //Strings
     bool hasShortStr() const;
     const std::string& getShortStr() const;
-
+    const std::string  getShortDisplayStr() const;
 
     bool hasLongStr() const;
     const std::string& getLongStr() const;
+    const std::string  getLongDisplayStr() const;
+
+    const std::string getShortLongDisplayStr() const;
 
 
     //Found
@@ -216,6 +227,9 @@ private:
 
     //Stop
     bool m_stopOnView;
+
+    //Default
+    std::string m_defaultValue;
 
     //Duplicate
     bool          m_allowDuplicates;

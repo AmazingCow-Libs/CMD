@@ -132,6 +132,15 @@ Flag& Flag::StopOnView()
 }
 
 
+//Defaults
+///
+Flag& Flag::Default(const std::string &value)
+{
+    m_defaultValue = value;
+    return *this;
+}
+
+
 //Duplicates
 Flag& Flag::NotAllowDuplicates()
 {
@@ -222,6 +231,13 @@ bool Flag::getStopOnView() const
 }
 
 
+//Defaults
+const std::string& Flag::getDefaultValue() const
+{
+    return m_defaultValue;
+}
+
+
 //Duplicates
 bool Flag::getAllowDuplicates() const
 {
@@ -252,6 +268,12 @@ const std::string& Flag::getShortStr() const
    return m_shortStr;
 }
 
+const std::string Flag::getShortDisplayStr() const
+{
+    return (hasShortStr())
+        ? std::string("-") + getShortStr()
+        : "";
+}
 
 bool Flag::hasLongStr() const
 {
@@ -265,6 +287,34 @@ const std::string& Flag::getLongStr() const
 
     return m_longStr;
 }
+
+const std::string Flag::getLongDisplayStr() const
+{
+    return (hasLongStr())
+        ? std::string("--") + getLongStr()
+        : "";
+}
+
+const std::string Flag::getShortLongDisplayStr() const
+{
+    auto format = (hasShortStr() && hasLongStr())
+        ? "%s %s"
+        : "%s";
+
+    auto shortStr = getShortDisplayStr();
+    auto longStr  = getLongDisplayStr ();
+
+    char buffer[shortStr.size() + longStr.size() + 1];
+    sprintf(
+        buffer,
+        format,
+        shortStr.c_str(),
+        longStr.c_str ()
+    );
+
+    return buffer;
+}
+
 
 //Found
 bool Flag::wasFound() const
