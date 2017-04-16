@@ -2,10 +2,10 @@
 //               █      █                                                     //
 //               ████████                                                     //
 //             ██        ██                                                   //
-//            ███  █  █  ███        Flag.h                                    //
+//            ███  █  █  ███        Flag.cpp                                  //
 //            █ █        █ █        CMD                                       //
 //             ████████████                                                   //
-//           █              █       Copyright (c) 2016                        //
+//           █              █       Copyright (c) 2016, 2017                  //
 //          █     █    █     █      AmazingCow - www.AmazingCow.com           //
 //          █     █    █     █                                                //
 //           █              █       N2OMatt - n2omatt@amazingcow.com          //
