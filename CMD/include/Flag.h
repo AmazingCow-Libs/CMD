@@ -29,9 +29,16 @@ public:
         const std::string &shortName,
         const std::string &longName,
         const std::string &description,
-        FlagOptions        options) noexcept
+        FlagOptions        options,
+        const std::string &group = "") noexcept
     {
-        return std::make_shared<Flag>(shortName, longName, description, options);
+        return std::make_shared<Flag>(
+            shortName,
+            longName,
+            description,
+            options,
+            group
+        );
     }
 
     //------------------------------------------------------------------------//
@@ -42,7 +49,8 @@ public:
         const std::string &shortName,
         const std::string &longName,
         const std::string &description,
-        FlagOptions        options);
+        FlagOptions        options,
+        const std::string &group = "");
 
 
     //------------------------------------------------------------------------//
@@ -73,11 +81,17 @@ public:
     // iVars                                                                  //
     //------------------------------------------------------------------------//
 private:
+    //--------------------------------------------------------------------------
+    // Info.
     std::string m_shortName;
     std::string m_longName;
     std::string m_description;
     FlagOptions m_options;
 
+    std::string m_group;
+
+    //--------------------------------------------------------------------------
+    // Values
     std::vector<std::string> m_values;
 
     bool m_found;

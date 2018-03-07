@@ -17,12 +17,14 @@ Flag::Flag(
     const std::string &shortName,
     const std::string &longName,
     const std::string &description,
-    FlagOptions        options)
+    FlagOptions        options,
+    const std::string &group /* = "" */)
     // Members...
     : m_shortName  (  shortName)
     , m_longName   (   longName)
     , m_description(description)
     , m_options    (    options)
+    , m_group      (      group)
     , m_found      (      false)
     , m_foundCount (          0)
 {
