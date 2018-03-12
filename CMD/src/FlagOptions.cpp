@@ -23,6 +23,7 @@
 #include "acow/cpp_goodies.h"
 #include "CoreAssert/CoreAssert.h"
 
+
 //----------------------------------------------------------------------------//
 // Functions                                                                  //
 //----------------------------------------------------------------------------//
@@ -38,8 +39,10 @@ void CMD::CheckFlagOptionsValidity(FlagOptions options) noexcept
             RequiredArgument
         );
 
+
         if(has_argument_flag)
         {
+
             auto argument_flag_exclusive = ACOW_FLAG_ARE_EXCLUSIVE(
                 options,
                 NoArgument,
@@ -61,7 +64,7 @@ void CMD::CheckFlagOptionsValidity(FlagOptions options) noexcept
         auto has_duplicate_flag = ACOW_FLAG_HAS_ANY(
             options,
             NoDuplicates,
-            AllowDuplicates,
+            AllowDuplicates
         );
 
         if(has_duplicate_flag)
@@ -87,7 +90,7 @@ void CMD::CheckFlagOptionsValidity(FlagOptions options) noexcept
             options,
             MergeArgument,
             DiscardPreviousArgument,
-            DiscardCurrentArgument,
+            DiscardCurrentArgument
         );
 
         if(has_replacement_flag)
@@ -96,7 +99,7 @@ void CMD::CheckFlagOptionsValidity(FlagOptions options) noexcept
                 options,
                 MergeArgument,
                 DiscardPreviousArgument,
-                DiscardCurrentArgument,
+                DiscardCurrentArgument
             );
 
             COREASSERT_ASSERT(
