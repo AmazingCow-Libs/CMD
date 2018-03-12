@@ -40,5 +40,3 @@
 #define NS_CMD_BEGIN namespace CMD {
 #define NS_CMD_END   }
 #define USING_NS_CMD using namespace CMD;
-
-#endif // defined(__CMD_include_CMD_Utils_h__) //
