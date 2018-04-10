@@ -114,8 +114,7 @@ private:
     // Values
     std::vector<std::string> m_values;
 
-    bool m_found;
-    int  m_foundCount;
+    int m_foundCount;
 
 }; // class Flag
 
