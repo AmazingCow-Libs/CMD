@@ -32,18 +32,18 @@ NS_CMD_BEGIN
 // Enums / Constants / Typedefs                                               //
 //----------------------------------------------------------------------------//
 enum {
-    StopOnView = 1 << 0,
+    StopOnView = 1 << 0,       // 0000 0000 0001
 
-    NoArgument       = 1 << 1,
-    OptionalArgument = 1 << 2,
-    RequiredArgument = 1 << 3,
+    NoArgument       = 1 << 1, // 0000 0000 0010
+    OptionalArgument = 1 << 2, // 0000 0000 0100
+    RequiredArgument = 1 << 3, // 0000 0000 1000
 
-    NoDuplicates    = 1 << 4,
-    AllowDuplicates = 1 << 5,
+    NoDuplicates    = 1 << 4,  // 0000 0001 0000
+    AllowDuplicates = 1 << 5,  // 0000 0010 0000
 
-    MergeArgument           = 1 << 6,
-    DiscardPreviousArgument = 1 << 7,
-    DiscardCurrentArgument  = 1 << 8,
+    MergeArgument           = 1 << 6, // 0000 0100 0000
+    DiscardPreviousArgument = 1 << 7, // 0000 1000 0000
+    DiscardCurrentArgument  = 1 << 8, // 0001 0000 0000
 };
 
 typedef uint32_t FlagOptions;
