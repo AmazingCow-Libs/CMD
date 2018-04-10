@@ -113,7 +113,11 @@ Flag::AddValue(const std::string &value) noexcept
     // Discard Previous
     else if(ACOW_FLAG_HAS(DiscardPreviousArgument, m_options))
     {
-        m_values[0] = value;
+        if(m_values.empty()) { 
+            m_values.push_back(value);
+        } else { 
+            m_values[0] = value;
+        }
     }
 
     //--------------------------------------------------------------------------
