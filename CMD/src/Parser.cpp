@@ -227,6 +227,8 @@ Parser::Parse(int argc, char **argv) noexcept
             if(!p_flag && ShouldContinueOrDieOnNonValidFlags(arg))
                 continue;
 
+            p_flag->IncrementFoundCount();
+
             auto flag_options = p_flag->GetOptions();
             auto glued_value  = (is_short_flag)
                 ? extract_short_flag_glued_value(arg)
@@ -277,9 +279,7 @@ Parser::Parse(int argc, char **argv) noexcept
                 if(!value.empty())
                     p_flag->AddValue(value);
             }
-
-            p_flag->IncrementFoundCount();
-
+           
             //------------------------------------------------------------------
             // Stop on View flag - We must stop parsing now!
             if(ACOW_FLAG_HAS(StopOnView, flag_options))
