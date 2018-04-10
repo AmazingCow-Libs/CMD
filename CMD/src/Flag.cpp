@@ -45,7 +45,6 @@ Flag::Flag(
     , m_description(description)
     , m_options    (    options)
     , m_group      (      group)
-    , m_found      (      false)
     , m_foundCount (          0)
 {
     //--------------------------------------------------------------------------
