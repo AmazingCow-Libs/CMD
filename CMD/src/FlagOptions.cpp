@@ -42,7 +42,6 @@ void CMD::CheckFlagOptionsValidity(FlagOptions options) noexcept
 
         if(has_argument_flag)
         {
-
             auto argument_flag_exclusive = ACOW_FLAG_ARE_EXCLUSIVE(
                 options,
                 NoArgument,
