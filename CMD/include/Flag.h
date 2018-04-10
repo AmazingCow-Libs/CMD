@@ -106,7 +106,7 @@ private:
     std::string m_shortName;
     std::string m_longName;
     std::string m_description;
-    FlagOptions m_options;
+    FlagOptions m_options = 0;
 
     std::string m_group;
 
