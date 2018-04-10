@@ -72,7 +72,7 @@ std::string
 Flag::GetValue() const noexcept
 {
     COREASSERT_ASSERT(
-        ACOW_FLAG_HAS(AllowDuplicates, m_options),
+        ACOW_FLAG_HAS(AllowDuplicates, m_options) == false,
         "Flag (%s - %s) allows duplicates - Use Flag::GetValues instead"
     );
 
